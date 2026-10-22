@@ -16,31 +16,35 @@ spec:
         app: http-app
     spec:
       containers:
-        - name: nginx
-          image: nginx:stable
+        - name: http-app
+          image: quay.io/openshift/origin-hello-openshift:latest
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
           resources:
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 25m
+              memory: 32Mi
             limits:
-              cpu: 250m
+              cpu: 200m
               memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: http-app
-  labels:
-    app: http-app
 spec:
   selector:
     app: http-app
   ports:
     - name: http
-      port: 80
+      port: 8080
       targetPort: http
 ---
 apiVersion: route.openshift.io/v1
