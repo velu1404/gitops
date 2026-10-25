@@ -1,4 +1,4 @@
-
+---
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
@@ -56,8 +56,7 @@ metadata:
   namespace: openshift-gitops
 spec:
   clusterSets:
-    - primary-dr
-    - secondary-dr
+    - gitops-configure
   predicates:
     - requiredClusterSelector:
         labelSelector:
