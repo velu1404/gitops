@@ -2,29 +2,28 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: oadp-install-policy
+  name: install-oadp-operator
   namespace: openshift-gitops
 spec:
   remediationAction: enforce
-  disabled: false
   policy-templates:
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: oadp-install-resources
+          name: install-oadp-resources
         spec:
           remediationAction: enforce
           severity: medium
           object-templates:
-            - complianceType: musthave
+            - complianceType: MustHave
               objectDefinition:
                 apiVersion: v1
                 kind: Namespace
                 metadata:
                   name: openshift-adp
 
-            - complianceType: musthave
+            - complianceType: MustHave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1
                 kind: OperatorGroup
@@ -35,7 +34,7 @@ spec:
                   targetNamespaces:
                     - openshift-adp
 
-            - complianceType: musthave
+            - complianceType: MustHave
               objectDefinition:
                 apiVersion: operators.coreos.com/v1alpha1
                 kind: Subscription
@@ -43,21 +42,13 @@ spec:
                   name: oadp-operator
                   namespace: openshift-adp
                 spec:
-                  channel: stable-1.5
+                  channel: stable
                   name: oadp-operator
                   source: redhat-operators
                   sourceNamespace: openshift-marketplace
                   installPlanApproval: Automatic
 ---
-apiVersion: cluster.open-cluster-management.io/v1beta2
-kind: ManagedClusterSetBinding
-metadata:
-  name: gitops-configure
-  namespace: openshift-gitops
-spec:
-  clusterSet: gitops-configure
----
-apiVersion: cluster.open-cluster-management.io/v1beta1
+apiVersion: cluster.open-cluster.io/v1beta1
 kind: Placement
 metadata:
   name: oadp-placement
@@ -65,11 +56,6 @@ metadata:
 spec:
   clusterSets:
     - gitops-configure
-  predicates:
-    - requiredClusterSelector:
-        labelSelector:
-          matchLabels:
-            install-oadp: "true"
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
@@ -77,10 +63,10 @@ metadata:
   name: oadp-placement-binding
   namespace: openshift-gitops
 placementRef:
-  apiGroup: cluster.open-cluster-management.io
-  kind: Placement
   name: oadp-placement
+  kind: Placement
+  apiGroup: cluster.open-cluster.io
 subjects:
-  - apiGroup: policy.open-cluster-management.io
+  - name: install-oadp-operator
     kind: Policy
-    name: oadp-install-policy
+    apiGroup: policy.open-cluster-management.io
