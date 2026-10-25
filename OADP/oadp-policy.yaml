@@ -49,6 +49,14 @@ spec:
                   sourceNamespace: openshift-marketplace
                   installPlanApproval: Automatic
 ---
+apiVersion: cluster.open-cluster-management.io/v1beta2
+kind: ManagedClusterSetBinding
+metadata:
+  name: gitops-configure
+  namespace: openshift-gitops
+spec:
+  clusterSet: gitops-configure
+---
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
