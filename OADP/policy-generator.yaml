@@ -1,0 +1,14 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: oadp-operator-generator
+policyDefaults:
+  namespace: openshift-gitops
+  remediationAction: enforce
+  placement:
+    placementPath: placement.yaml
+policies:
+  - name: install-oadp-operator
+    manifests:
+      - path: resources/oadp-operator.yaml
